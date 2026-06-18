@@ -1,3 +1,36 @@
+// ==================== 🛠️ 以后换课文，只改这里的数据 ====================
+const lessonTitle = "10.4 生命！生命！";
+
+const lessonData = [
+    // 第 1 段
+    ["我", "wǒ", "I / me", "saya"],
+    ["常常", "cháng cháng", "often", "sering / selalu"],
+    ["想", "xiǎng", "think", "fikir"],
+    ["，", "", "", ""],
+    ["生命", "shēng mìng", "life", "nyawa / kehidupan"],
+    ["是", "shì", "is / am / are", "adalah"],
+    ["什么", "shén me", "what", "apa"],
+    ["呢", "ne", "particle", "kah"],
+    ["？", "", "", ""],
+    
+    ["\n", "", "", ""], // 👈 这是一个分段标记，代表接下来的词进入下一段
+    
+    // 第 2 段
+    ["墙角", "qiáng jiǎo", "corner", "penjuru / sudut dinding"],
+    ["的", "de", "of", "punya"],
+    ["砖缝", "zhuān fèng", "brick crack", "celah batu bata"],
+    ["中", "zhōng", "inside / in", "dalam"],
+    ["，", "", "", ""],
+    ["掉进", "diào jìn", "fall into", "terjatuh ke dalam"],
+    ["了", "le", "particle", "sudah"],
+    ["一粒", "yí lì", "a grain of", "sebutir"],
+    ["香瓜子", "xiāng guā zǐ", "melon seed", "biji kuaci"],
+    ["\n", "", "", ""],
+    
+    // ...... 之后的字词依此类推，按照这个格式一直往下写即可
+];
+// =====================================================================
+
 let currentIdx = -1; 
 let saved = JSON.parse(localStorage.getItem('saved_104')) || [];
 let quizData = [];
@@ -5,7 +38,10 @@ let currentQuizIdx = 0;
 let isLocked = false;
 
 window.onload = function() {
-    // 监听外部数据脚本里的 lessonData 是否存在
+    // 动态渲染标题
+    document.getElementById('articleTitle').innerText = lessonTitle;
+    document.title = lessonTitle;
+
     if (typeof lessonData !== 'undefined') { 
         render(); 
         renderNB(); 
@@ -161,7 +197,6 @@ function startQuizGame() {
     loadQuestion();
 }
 
-/* ✨ 终极修复：纯净的数据清理与判定逻辑 */
 function loadQuestion() {
     isLocked = false;
     const targetIdx = quizData[currentQuizIdx];
@@ -171,11 +206,9 @@ function loadQuestion() {
     document.getElementById('quizQuestion').innerText = data[0];
     document.getElementById('quizPinyin').innerText = `[${data[1]}]`;
     
-    // 正确答案：清理掉两端的空格
     const correctStr = (data[2].trim() + "；" + data[3].trim());
     let options = [correctStr];
     
-    // 干扰项提取：清理、去重、确保不等于正确答案
     let others = lessonData
         .filter(d => d[1] !== "" && d[0] !== data[0])
         .map(d => (d[2].trim() + "；" + d[3].trim()));
@@ -195,7 +228,6 @@ function loadQuestion() {
         b.innerText = opt;
         b.onclick = () => {
             if(isLocked || b.classList.contains('wrong')) return;
-            // 🌟 使用 trim() 进行深度比对
             if(opt.trim() === correctStr.trim()) {
                 isLocked = true;
                 b.classList.add('correct');
